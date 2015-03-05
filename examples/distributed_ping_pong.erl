@@ -27,6 +27,13 @@
 % (ping@3ce2c05f0ff7)2> distributed_ping_pong:start_ping(pong@3ce2c05f0ff7).
 %
 % 5) Have fun! :)
+%
+% Note: if there are 2 different machines, in ping machine you can, for example, configure
+%       the file hosts to be able to "ping" the pong's machine:
+%
+%       shell1> sudo bash
+%       shell1> echo [ip_of_pong] 3ce2c05f0ff7 >> /etc/hosts
+%
 
 ping(0, Pong_Node) ->
   % end

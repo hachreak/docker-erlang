@@ -1,6 +1,8 @@
 # Run container for client
 FROM debian:latest
 
+MAINTAINER Leonardo Rossi <leonardo.rossi@studenti.unipr.it>
+
 ENV DEBIAN_FRONTEND noninteractive
 
 # Update system
