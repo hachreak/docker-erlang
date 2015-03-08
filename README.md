@@ -65,3 +65,8 @@ ok
 2> find_list_max:list_max([1,9,3,7,5,2,11,8,9]).
 11
 ```
+
+**robustness.erl**
+
+Try to test the robustness of a erlang application.
+You find instruction on how to start the test directly inside the file.
