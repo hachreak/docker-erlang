@@ -6,6 +6,12 @@ How to build docker image?
 
 `docker build -t myerlang .`
 
+Or, you can use my image with:
+
+`docker pull hachreak/erlang`
+
+See details here: https://registry.hub.docker.com/u/hachreak/erlang/
+
 
 How to run the docker image?
 ----------------------------
