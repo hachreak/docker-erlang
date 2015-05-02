@@ -1,4 +1,5 @@
 *.beam
+.bash_history
 examples/*.dump
-examples/.bash_history
 examples/.erlang.cookie
+

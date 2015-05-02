@@ -5,13 +5,16 @@
 insert(Key, Value) ->
   case sc_store:lookup(Key) of
     {ok, Pid} ->
+      sc_event:replace(Key, Value),
       sc_element:replace(Pid, Value);
     {error, _Reason} ->
+      sc_event:create(Key, Value),
       {ok, Pid} = sc_element:create(Value),
       sc_store:insert(Key, Pid)
   end.
 
 lookup(Key) ->
+  sc_event:lookup(Key),
   try
     % if the key indeed maps to a pid then the sc_element
     {ok, Pid} = sc_store:lookup(Key),
@@ -29,6 +32,7 @@ lookup(Key) ->
   end.
 
 delete(Key) ->
+  sc_event:delete(Key),
   case sc_store:lookup(Key) of
     {ok, Pid} ->
       % delete operation delegated to sc_element:delete/1.

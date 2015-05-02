@@ -19,7 +19,7 @@
 
 -behaviour(supervisor).
 
--export([start_link/0, start_child/2]).
+-export([start_link/0]).
 
 -export([init/1]).
 
@@ -32,36 +32,13 @@ start_link() ->
   % Note: it invokes sc_sup:init() callback function.
   supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
-start_child(Key, Value) ->
-  % the call results in the arguments Key and Value being sento to the
-  % start_link function of sc_element.
-  supervisor:start_child(?SERVER, [Key, Value]).
-
 init([]) ->
-  % our children are temporary, meaning that if they die, they are dead.
-  % The supervisor will not restart them.
-  % This supervisor is in many way just a factory for sc_element servers.
-  RestartStrategy = simple_one_for_one,
-  MaxRestarts = 0,
-  MaxSecondsBetweenRestart = 1,
+  ElementSup = {sc_element_sup, {sc_element_sup, start_link, []},
+                permanent, 2000, supervisor, [sc_element]},
 
-  SupFlags = {RestartStrategy, MaxRestarts, MaxSecondsBetweenRestart},
+  EventManager = {sc_event, {sc_event, start_link, []},
+                  permanent, 2000, worker, [sc_event]},
 
-  % if a child dies, it's not to be restarted under any circumstance.
-  Restart = temporary,
-  % supervisor shuts down it does not wait for it's children to shutdown
-  % cleanly but instead just kills them forcefully.
-  Shutdown = brutal_kill,
-  % all children of supervisor are worker processes.
-  Type = worker,
-
-  % single child specification for the sc_element process.
-  % supervisor container will not start it automatically but will instead
-  % wait for an explicit request to start the child.
-  % first tuple indicates that we will start the child of this supervisor by
-  % calling sc_element:start_link appending [Key, Value] onto the default
-  % argument list supplied in the child spec.
-  AChild = {sc_element, {sc_element, start_link, []},
-            Restart, Shutdown, Type, [sc_element]},
-
-  {ok, {SupFlags, [AChild]}}.
+  Children = [ElementSup, EventManager],
+  RestartStrategy = {one_for_one, 4, 3600},
+  {ok, {RestartStrategy, Children}}.

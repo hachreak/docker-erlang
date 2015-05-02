@@ -17,15 +17,17 @@ How to run the docker image?
 ----------------------------
 
 ```bash
-docker run -i -t -v `pwd`/examples:/var/www:rw --rm myerlang /bin/bash
+docker run -i -t -v `pwd`/examples:/var/www:rw --rm hachreak/erlang /bin/bash
 ```
 
 
 How to start 2 shell on the same container?
 -------------------------------------------
 
-shell1> docker run -i -t -v `pwd`/examples:/var/www:rw --rm myerlang /bin/bash
+```bash
+shell1> docker run -i -t -v `pwd`/examples:/var/www:rw --rm hachreak/erlang /bin/bash
 shell2> docker exec -it CONTAINER_ID bash
+```
 
 Examples
 --------

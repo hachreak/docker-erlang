@@ -24,7 +24,7 @@
 create(Value, LeaseTime) ->
   % delegate the process to startup to the
   % sc_sup:start_child/2
-  sc_sup:start_child(Value, LeaseTime).
+  sc_element_sup:start_child(Value, LeaseTime).
 
 create(Value) ->
   create(Value, ?DEFAULT_LEASE_TIME).
