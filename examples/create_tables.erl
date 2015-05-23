@@ -1,6 +1,9 @@
 -module(create_tables).
 
--export([init_tables/0]).
+-export([init_tables/0, insert_user/3, insert_project/2,
+         get_user_id/1]).
+
+-include_lib("stdlib/include/qlc.hrl").
 
 -record(user, {id, name}).
 -record(project, {title, description}).
@@ -40,6 +43,15 @@
 % 0 held locks, 0 in queue; 0 local transactions, 0 remote
 % 0 transactions waits for other nodes: []
 % ok
+% (mynode@b2223ccac07d) 6> create_tables:insert_project(myproject, "hello worlds project").
+% ok
+% (mynode@b2223ccac07d) 7> create_tables:insert_user(1, pippo, [myproject]).
+% {atomic,ok}
+% (mynode@b2223ccac07d) 8> mnesia:dirty_read(contributor, 1).
+% [{contributor,1,myproject}]
+% (mynode@b2223ccac07d) 9> create_tables:get_user_id(pippo).
+% {atomic,[1]}
+% (mynode@b2223ccac07d) 10>
 %
 %
 % Storage types: ram_copy, disc_copy (ram and disc) or disc_only_copy.
@@ -72,3 +84,40 @@ init_tables() ->
   mnesia:create_table(contributor,
                       [{type, bag},
                        {attributes, record_info(fields, contributor)}]).
+
+insert_user(Id, Name, ProjectTitles) when ProjectTitles =/= [] ->
+  User = #user{id = Id, name = Name},
+  Fun = fun() ->
+            % start transaction and write record in user table
+            mnesia:write(User),
+            % and then a list of record on contributor table for each project
+            lists:foreach(
+              fun(ProjectTitle) ->
+                  % check if project exists on table
+                  [#project{title = ProjectTitle}] = mnesia:read(project, ProjectTitle),
+                  % if it's true, than write new record on contributor table
+                  mnesia:write(#contributor{user_id = Id, project_title = ProjectTitle})
+              end,
+              ProjectTitles
+             )
+        end,
+  % the function Fun executes within the contect o a Mnesia transaction.
+  %  1. it's executed as a unit, all operation either succed or the whole transaction fails.
+  %  2. it's capable of locking information in the db, so that concurrent operations on the
+  %     db don't negatively impact one to another.
+  % the use of transactions is critical for ensuring the integrity of the db accross complex
+  % operations.
+  mnesia:transaction(Fun).
+
+insert_project(Title, Description) ->
+  % dirty operations don't respect transactions or locks on the database.
+  mnesia:dirty_write(#project{title = Title, description = Description}).
+
+% query example with qlc: SELECT user.id FROM user WHERE user.name = Name
+get_user_id(Name) ->
+  mnesia:transaction(
+    fun() ->
+       Q = qlc:q([U#user.id || U <- mnesia:table(user), U#user.name == Name]),
+       qlc:e(Q)
+    end
+  ).
