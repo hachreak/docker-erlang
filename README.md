@@ -1,7 +1,7 @@
-Erlang Examples
-===============
+Erlang 18.3
+===========
 
-How to build docker image?
+How to use the docker image?
 --------------------------
 
 `docker build -t myerlang .`
@@ -17,7 +17,7 @@ How to run the docker image?
 ----------------------------
 
 ```bash
-docker run -i -t -v `pwd`/examples:/var/www:rw --rm hachreak/erlang /bin/bash
+docker run -it --rm -v `pwd`/examples:/var/www:rw hachreak/erlang /bin/bash
 ```
 
 
@@ -25,7 +25,7 @@ How to start 2 shell on the same container?
 -------------------------------------------
 
 ```bash
-shell1> docker run -i -t -v `pwd`/examples:/var/www:rw --rm hachreak/erlang /bin/bash
+shell1> docker run -it -v `pwd`/examples:/var/www:rw --rm hachreak/erlang /bin/bash
 shell2> docker exec -it CONTAINER_ID bash
 ```
 

@@ -1,26 +1,24 @@
-# Run container for client
-FROM debian:latest
+FROM debian:jessie
 
 MAINTAINER Leonardo Rossi <leonardo.rossi@studenti.unipr.it>
 
-ENV DEBIAN_FRONTEND noninteractive
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && \
+    apt-get install -y wget
 
-# Update system
-RUN apt-get update && \
-    apt-get -y install erlang sudo && \
-    apt-get -y autoremove && \
-    apt-get -y clean && \
-    apt-get -y autoclean && \
-    groupadd -g 1000 erlang && \
-    useradd -u 1000 -g erlang -G sudo -d /var/www/ erlang -s /bin/bash && \
-    echo 'erlang  ALL=(ALL:ALL) NOPASSWD: ALL' >> /etc/sudoers && \
-    service sudo restart
+RUN wget -O /tmp/erlang.deb https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb && \
+    dpkg -i /tmp/erlang.deb && \
+    rm /tmp/erlang.deb && \
+    apt-get update && \
+    apt-get install -y erlang
+
+RUN groupadd -g 1000 -r erlang && useradd -u 1000 -r -g erlang erlang
 
 # Define mountable directory for client.
 VOLUME ["/var/www"]
 
+WORKDIR /code
+
 USER erlang
 
-# Execute python server
-WORKDIR /var/www/
 CMD ["erl"]
