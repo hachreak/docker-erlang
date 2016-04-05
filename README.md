@@ -84,3 +84,8 @@ ok
 
 Try to test the robustness of a erlang application.
 You find instruction on how to start the test directly inside the file.
+
+### Thanks to ..
+
+Special thanks to [Erlang Solutions](https://www.erlang-solutions.com) for the
+available debian packages.
