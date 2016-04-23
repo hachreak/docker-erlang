@@ -12,7 +12,7 @@ RUN wget -O /tmp/erlang.deb https://packages.erlang-solutions.com/erlang-solutio
     apt-get update && \
     apt-get install -y erlang
 
-RUN groupadd -g 1000 -r erlang && useradd -u 1000 -r -g erlang erlang
+RUN groupadd -g 1000 -r erlang && useradd -d /home/erlang -m -u 1000 -r -g erlang erlang
 
 # Define mountable directory for client.
 VOLUME ["/var/www"]
