@@ -1,10 +1,10 @@
-FROM debian:jessie
+FROM debian:stretch
 
 MAINTAINER Leonardo Rossi <leonardo.rossi@studenti.unipr.it>
 
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
-    apt-get install -y wget git build-essential
+  apt-get install -y wget git build-essential libssl1.0.2
 
 RUN wget -O /tmp/erlang.deb https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb && \
     dpkg -i /tmp/erlang.deb && \
