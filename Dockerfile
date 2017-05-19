@@ -4,7 +4,7 @@ MAINTAINER Leonardo Rossi <leonardo.rossi@studenti.unipr.it>
 
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
-    apt-get install -y wget git
+    apt-get install -y wget git build-essential
 
 RUN wget -O /tmp/erlang.deb https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb && \
     dpkg -i /tmp/erlang.deb && \
@@ -23,11 +23,11 @@ RUN git clone https://github.com/erlang/rebar3.git && \
     cd rebar3 && \
     ./bootstrap && \
     ./rebar3 local install && \
-    echo "export PATH=$PATH:$HOME/.cache/rebar3/bin" >> $HOME/.bashrc
+    echo "export PATH=\$PATH:\$HOME/.cache/rebar3/bin" >> $HOME/.bashrc
 
 # Define mountable directory for client.
 VOLUME ["/var/www"]
 
-WORKDIR /code
+WORKDIR /var/www
 
 CMD ["erl"]

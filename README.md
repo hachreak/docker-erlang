@@ -1,4 +1,4 @@
-Erlang 18.3 + rebar3
+Erlang 19 + rebar3
 ====================
 
 How to use the docker image?
